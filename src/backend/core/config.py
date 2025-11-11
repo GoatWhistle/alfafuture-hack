@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-env_files = (".env.app_config",)
+env_files = (".env",)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

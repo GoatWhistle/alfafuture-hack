@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from api import router as api_router
+from core.config import Settings, settings
 
 app = FastAPI()
 app.include_router(
@@ -12,17 +13,17 @@ app.include_router(
 
 
 @app.get(
-    "/health",
+    "/ping",
     status_code=HTTPStatus.OK,
 )
-async def health_check():
-    return {"status": "ok"}
+async def ping():
+    return {"message": "pong"}
 
 
 if __name__ == "__main__":
     uvicorn.run(
         "main:app",
-        host="127.0.0.1",
-        port=8000,
+        host=settings.run.host,
+        port=settings.run.port,
         reload=True,
     )

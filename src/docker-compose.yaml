@@ -1,0 +1,69 @@
+services:
+  backend:
+    build:
+      dockerfile: DockerBuild/backend/Dockerfile
+      context: ./
+#    depends_on:
+#      pg:
+#        condition: service_healthy
+#    environment:
+#      DB_URL: ${APP_CONFIG__DB__DB_URL}
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend:/backend
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      dockerfile: DockerBuild/frontend/Dockerfile
+      context: ./
+    volumes:
+      - ./frontend:/frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - app-net
+
+#  pg:
+#    image: postgres
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_DB}
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      PGDATA: /var/lib/postgresql/data
+#    ports:
+#      - "${DB_PORT}:5432"
+#    volumes:
+#      - pgdata:/var/lib/postgresql/data
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready" ]
+#      interval: 5s
+#      timeout: 3s
+#      retries: 3
+#    networks:
+#      - app-net
+
+#  migrations:
+#    build:
+#      context: ./
+#      dockerfile: docker_build/migrations/Dockerfile
+#    depends_on:
+#      pg:
+#        condition: service_healthy
+#    restart: "no"
+#    env_file:
+#      - src/backend/.env
+#    networks:
+#      - app-net
+#    volumes:
+#      - ./src/backend:/backend
+#
+#volumes:
+#  pgdata:
+#
+networks:
+  app-net:

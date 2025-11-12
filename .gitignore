@@ -5,3 +5,6 @@ src/backend/.env.app_config
 
 node_modules
 dist
+
+jwt-private.pem
+jwt-public.pem

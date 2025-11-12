@@ -40,10 +40,21 @@ class LLMConfig(BaseModel):
     default_model: str
 
 
+class JWTConfig(BaseModel):
+    private_key_path: Path = BASE_DIR / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "jwt-public.pem"
+    algorithm: str = "RS256"
+    access_token_lifetime_seconds: int = 1800
+    refresh_token_lifetime_seconds: int = 2_592_000
+    email_token_lifetime_seconds: int = 7200
+    password_token_lifetime_seconds: int = 600
+
+
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
-    chat: str = "/chat"
-    message: str = "/message"
+    chats: str = "/chats"
+    messages: str = "/messages"
+    users: str = "/users"
 
 
 class ApiPrefix(BaseModel):
@@ -61,6 +72,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig
     llm: LLMConfig
+    jwt: JWTConfig = JWTConfig()
     api: ApiPrefix = ApiPrefix()
     db: DbConfig
 

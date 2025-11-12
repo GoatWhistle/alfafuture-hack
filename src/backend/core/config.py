@@ -34,8 +34,16 @@ class DbConfig(BaseModel):
     }
 
 
+class LLMConfig(BaseModel):
+    api_key: str
+    api_base: str
+    default_model: str
+
+
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
+    chat: str = "/chat"
+    message: str = "/message"
 
 
 class ApiPrefix(BaseModel):
@@ -52,6 +60,7 @@ class Settings(BaseSettings):
         env_prefix="APP_CONFIG__",
     )
     run: RunConfig
+    llm: LLMConfig
     api: ApiPrefix = ApiPrefix()
     db: DbConfig
 

@@ -20,6 +20,8 @@ dependencies = [
     "pydantic (>=2.12.4,<3.0.0)",
     "gunicorn (>=23.0.0,<24.0.0)",
     "inflect (>=7.5.0,<8.0.0)",
+    "openai (>=2.7.2,<3.0.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
 ]
 
 [tool.poetry]

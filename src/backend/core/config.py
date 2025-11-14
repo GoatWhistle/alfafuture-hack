@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-env_files = (".env",)
+env_files = (".env.app_config",)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +20,6 @@ class RunConfig(BaseModel):
 
 class DbConfig(BaseModel):
     url: PostgresDsn
-    sync_url: PostgresDsn
     echo: bool = False
     echo_pool: bool = False
     max_overflow: int = 10
@@ -54,6 +53,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig
     api: ApiPrefix = ApiPrefix()
+    db: DbConfig
 
 
 settings = Settings()

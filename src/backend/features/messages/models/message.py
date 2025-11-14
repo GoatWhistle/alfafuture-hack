@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from database import Base, IdIntPkMixin
-from features.messages.schemas import MessageRead
 from shared.enums import SenderEnum
 
 if TYPE_CHECKING:
@@ -25,6 +24,3 @@ class Message(Base, IdIntPkMixin):
     )
 
     chat: Mapped["Chat"] = relationship(back_populates="messages")
-
-    def get_validation_schema(self) -> MessageRead:
-        return MessageRead.model_validate(self)

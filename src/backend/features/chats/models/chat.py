@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from database import Base, IdIntPkMixin
-from features.chats.schemas import ChatRead
 
 if TYPE_CHECKING:
     from features.messages.models import Message
@@ -19,8 +18,5 @@ class Chat(Base, IdIntPkMixin):
     )
 
     messages: Mapped[list["Message"]] = relationship(
-        back_populates="chats", cascade="all, delete-orphan"
+        back_populates="chat", cascade="all, delete-orphan"
     )
-
-    def get_validation_schema(self) -> ChatRead:
-        return ChatRead.model_validate(self)

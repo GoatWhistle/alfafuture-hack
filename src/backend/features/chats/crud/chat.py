@@ -1,7 +1,9 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from features.chats.models import Chat
 from features.chats.schemas import ChatCreate, ChatUpdate
+from features.messages.models import Message
 
 
 async def create_chat(
@@ -17,6 +19,13 @@ async def create_chat(
 
 async def get_chat_by_id(session: AsyncSession, chat_id: int) -> Chat | None:
     return await session.get(Chat, chat_id)
+
+
+async def get_messages_by_chat(session: AsyncSession, chat_id: int) -> list[Message]:
+    result = await session.execute(
+        select(Message).where(Message.chat_id == chat_id).order_by(Message.created_at)
+    )
+    return list(result.scalars().all())
 
 
 async def update_chat(

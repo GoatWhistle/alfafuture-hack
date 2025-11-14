@@ -10,12 +10,12 @@ router = APIRouter(
 
 router.include_router(
     router=chat_router,
-    tags=[settings.api.chats[1:].capitalize()],
-    prefix=settings.api.chats,
+    tags=[settings.api.v1.chats[1:].capitalize()],
+    prefix=settings.api.v1.chats,
 )
 
 router.include_router(
     router=message_router,
-    tags=[settings.api.messages[1:].capitalize()],
-    prefix=settings.api.messages,
+    tags=[settings.api.v1.messages[1:].capitalize()],
+    prefix=settings.api.v1.messages,
 )

@@ -72,9 +72,9 @@ class Settings(BaseSettings):
     )
     run: RunConfig
     llm: LLMConfig
+    db: DbConfig
     jwt: JWTConfig = JWTConfig()
     api: ApiPrefix = ApiPrefix()
-    db: DbConfig
 
 
 settings = Settings()

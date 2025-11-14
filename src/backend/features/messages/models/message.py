@@ -24,7 +24,7 @@ class Message(Base, IdIntPkMixin):
         DateTime(timezone=True), server_default=func.timezone("UTC", func.now())
     )
 
-    chat: Mapped[Chat] = relationship(back_populates="messages")
+    chat: Mapped["Chat"] = relationship(back_populates="messages")
 
     def get_validation_schema(self) -> MessageRead:
         return MessageRead.model_validate(self)

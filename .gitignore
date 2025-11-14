@@ -1,6 +1,7 @@
 .idea/
 src/backend/.venv/
 src/backend/.env
+src/backend/.env.app_config
 
 node_modules
 dist

@@ -5,7 +5,7 @@ from database.db_helper import db_helper
 from features.users.schemas.user import UserRegisterSchema, UserResponseSchema
 from features.users.service.user import register_user_service
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter()
 
 
 @router.post(

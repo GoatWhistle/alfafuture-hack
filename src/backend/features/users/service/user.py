@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 
 from features.users.models.user import User
-from features.users.schemas.user import UserRegisterSchema
+from features.users.schemas.user import UserRegisterSchema, UserResponseSchema
 from utils.JWT import hash_password, create_access_token
 
 
@@ -28,6 +28,9 @@ async def register_user_service(
     hashed_password = hash_password(user_data.password)
 
     new_user = User(
+        name=user_data.name,
+        surname=user_data.surname,
+        patronymic=user_data.patronymic,
         email=user_data.email,
         hashed_password=hashed_password,
     )
@@ -41,4 +44,9 @@ async def register_user_service(
         user_email=new_user.email,
     )
 
-    return new_user, access_token
+    user_schema = UserResponseSchema.model_validate({
+        "user_id": new_user.id,
+        "email": new_user.email
+    })
+
+    return user_schema, access_token

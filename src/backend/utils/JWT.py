@@ -7,19 +7,19 @@ from pytz import utc
 
 
 def encode_jwt(payload: dict) -> str:
-    private_key = settings.auth_jwt.private_key_path.read_text()
-    algorithm = settings.auth_jwt.algorithm
+    private_key = settings.jwt.private_key_path.read_text()
+    algorithm = settings.jwt.algorithm
     return encode(payload, private_key, algorithm=algorithm)
 
 
 def decode_jwt(token: str) -> dict:
-    public_key = settings.auth_jwt.public_key_path.read_text()
-    algorithm = settings.auth_jwt.algorithm
+    public_key = settings.jwt.public_key_path.read_text()
+    algorithm = settings.jwt.algorithm
     return decode(token, public_key, algorithms=[algorithm])
 
 
 def create_access_token(user_id: int, user_email: str) -> str:
-    lifetime = settings.auth_jwt.access_token_lifetime_seconds
+    lifetime = settings.jwt.access_token_lifetime_seconds
     now = datetime.now(utc)
     payload = {
         "sub": str(user_id),
@@ -31,7 +31,7 @@ def create_access_token(user_id: int, user_email: str) -> str:
 
 
 def create_refresh_token(user_id: int, user_email: str) -> str:
-    lifetime = settings.auth_jwt.refresh_token_lifetime_seconds
+    lifetime = settings.jwt.refresh_token_lifetime_seconds
     now = datetime.now(utc)
     payload = {
         "sub": str(user_id),

@@ -22,9 +22,9 @@ router.include_router(
     prefix=settings.api.v1.messages,
 )
 
-# router.include_router(
-#     router=users_router,
-#     tags=[settings.api.v1.users[1:].capitalize()],
-#     prefix=settings.api.v1.users,
-# )
+router.include_router(
+    router=users_router,
+    tags=[settings.api.v1.users[1:].capitalize()],
+    prefix=settings.api.v1.users,
+)
 

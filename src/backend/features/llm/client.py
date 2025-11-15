@@ -1,3 +1,5 @@
+import asyncio
+
 import httpx
 
 from core.config import settings
@@ -23,20 +25,33 @@ class LLMClient:
             await self.client.aclose()
 
     async def ask(
-        self, message: str, temperature: float = 0.7, max_tokens: int = 512
+        self,
+        prompt: str,
+        temperature: float = 0.7,
+        max_tokens: int = 512,
+        retries: int = 3,
     ) -> str:
         if not self.client:
             raise RuntimeError("LLMClient must be used within async with context")
 
-        response = await self.client.post(
-            "/chat/completions",
-            json={
-                "model": self.model,
-                "messages": [{"role": "user", "content": message}],
-                "temperature": temperature,
-                "max_tokens": max_tokens,
-            },
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
+        for attempt in range(retries):
+            response = await self.client.post(
+                "/chat/completions",
+                json={
+                    "model": self.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                },
+            )
+
+            try:
+                response.raise_for_status()
+                data = response.json()
+                return data["choices"][0]["message"]["content"]
+
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == 429 and attempt < retries - 1:
+                    await asyncio.sleep(1.5**attempt)
+                    continue
+                raise

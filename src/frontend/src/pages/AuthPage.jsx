@@ -1,10 +1,11 @@
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Login from '../components/Auth/Login';
 import Signup from '../components/Auth/Signup';
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const currentTab = searchParams.get('tab') || 'login';
 
   return (
@@ -16,22 +17,31 @@ const AuthPage = () => {
         </div>
 
         <div className="auth-tabs">
-          <a
-            href="/auth?tab=login"
+          <button
             className={`auth-tab ${currentTab === 'login' ? 'active' : ''}`}
+            onClick={() => navigate('/auth?tab=login')}
           >
             Вход
-          </a>
-          <a
-            href="/auth?tab=signup"
+          </button>
+          <button
             className={`auth-tab ${currentTab === 'signup' ? 'active' : ''}`}
+            onClick={() => navigate('/auth?tab=signup')}
           >
             Регистрация
-          </a>
+          </button>
         </div>
 
         <div className="auth-content">
           {currentTab === 'login' ? <Login /> : <Signup />}
+        </div>
+
+        <div className="auth-footer">
+          <button
+            className="btn btn-secondary full-width"
+            onClick={() => navigate('/')}
+          >
+            Назад на главную
+          </button>
         </div>
       </div>
     </div>

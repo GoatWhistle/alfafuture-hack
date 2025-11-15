@@ -1,14 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import ChatWindow from '../components/Chat/ChatWindow';
 import Sidebar from '../components/Chat/Sidebar';
 
 const ChatPage = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Заглушка для отправки сообщения
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   const sendMessage = async (content) => {
     const userMessage = {
       id: Date.now(),
@@ -20,7 +26,6 @@ const ChatPage = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Имитация ответа AI
     setTimeout(() => {
       const aiMessage = {
         id: Date.now() + 1,
@@ -36,7 +41,7 @@ const ChatPage = () => {
   return (
     <div className="chat-page">
       <div className="chat-layout">
-        <Sidebar user={user} onLogout={logout} />
+        <Sidebar user={user} onLogout={handleLogout} />
         <ChatWindow
           messages={messages}
           onSendMessage={sendMessage}

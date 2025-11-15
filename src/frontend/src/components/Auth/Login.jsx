@@ -16,7 +16,6 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Очищаем ошибки при вводе
     if (errors[e.target.name]) {
       setErrors({
         ...errors,

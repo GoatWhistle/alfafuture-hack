@@ -40,7 +40,7 @@ const ChatWindow = ({ messages, onSendMessage, isLoading, user }) => {
           <div className="empty-state">
             <div className="empty-icon">🤖</div>
             <h3>Начните диалог</h3>
-            <p>Задайте вопрос AI-ассистенту и получите помощь</p>
+            <p>Задайте вопрос AI-ассистенту</p>
           </div>
         )}
 
@@ -48,7 +48,6 @@ const ChatWindow = ({ messages, onSendMessage, isLoading, user }) => {
           <Message
             key={message.id}
             message={message}
-            isUser={message.sender === 'user'}
           />
         ))}
 
@@ -81,14 +80,9 @@ const ChatWindow = ({ messages, onSendMessage, isLoading, user }) => {
             className="send-btn"
             disabled={!inputValue.trim() || isLoading}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-            </svg>
+            Отправить
           </button>
         </form>
-        <div className="chat-footer">
-          <small>AI может допускать ошибки. Проверяйте важную информацию.</small>
-        </div>
       </div>
     </div>
   );

@@ -12,3 +12,8 @@ class UserRegisterSchema(BaseModel):
 class UserResponseSchema(BaseModel):
     user_id: int
     email: EmailStr
+
+
+class UserLoginSchema(BaseModel):
+    email: EmailStr
+    password: str

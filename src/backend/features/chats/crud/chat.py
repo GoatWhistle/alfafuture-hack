@@ -9,8 +9,9 @@ from features.messages.models import Message
 async def create_chat(
     session: AsyncSession,
     chat_create: ChatCreate,
+    user_id: int,
 ) -> Chat:
-    chat = Chat(**chat_create.model_dump())
+    chat = Chat(**chat_create.model_dump(), user_id=user_id)
     session.add(chat)
     await session.commit()
     await session.refresh(chat)

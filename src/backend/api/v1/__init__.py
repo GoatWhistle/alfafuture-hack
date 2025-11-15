@@ -27,4 +27,3 @@ router.include_router(
     tags=[settings.api.v1.users[1:].capitalize()],
     prefix=settings.api.v1.users,
 )
-

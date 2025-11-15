@@ -1,20 +1,25 @@
 from typing import Optional
 
+from fastapi import Cookie, Depends, HTTPException, status
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException, status, Depends, Cookie
-from database import db_helper
 
+from database import db_helper
 from features.users.models.user import User
-from features.users.schemas.user import UserRegisterSchema, UserResponseSchema, UserLoginSchema
-from utils.JWT import hash_password, create_access_token, validate_password, decode_jwt
-from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+from features.users.schemas.user import (
+    UserLoginSchema,
+    UserRegisterSchema,
+    UserResponseSchema,
+)
+from utils.JWT import create_access_token, decode_jwt, hash_password, validate_password
 
 
 async def get_user_by_email(session: AsyncSession, email: str) -> Optional[User]:
     stmt = select(User).where(User.email == email)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
+
 
 async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[User]:
     stmt = select(User).where(User.id == user_id)
@@ -23,7 +28,7 @@ async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[User]:
 
 
 async def register_user_service(
-        session: AsyncSession, user_data: UserRegisterSchema
+    session: AsyncSession, user_data: UserRegisterSchema
 ) -> UserResponseSchema:
     existing_user = await get_user_by_email(session, user_data.email)
     if existing_user:
@@ -46,13 +51,11 @@ async def register_user_service(
     await session.commit()
     await session.refresh(new_user)
 
-    user_schema = UserResponseSchema.model_validate({
-        "user_id": new_user.id,
-        "email": new_user.email
-    })
+    user_schema = UserResponseSchema.model_validate(
+        {"user_id": new_user.id, "email": new_user.email}
+    )
 
     return user_schema
-
 
 
 async def login_user_service(
@@ -78,10 +81,9 @@ async def login_user_service(
         user_email=user.email,
     )
 
-    user_schema = UserResponseSchema.model_validate({
-        "user_id": user.id,
-        "email": user.email
-    })
+    user_schema = UserResponseSchema.model_validate(
+        {"user_id": user.id, "email": user.email}
+    )
 
     return user_schema, access_token
 

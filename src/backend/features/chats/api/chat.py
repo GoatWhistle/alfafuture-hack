@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import features.chats.service.chat as service
 from database import db_helper
 from features.chats.schemas import ChatCreate, ChatRead, ChatUpdate
+from features.users.models import User
+from features.users.service.user import get_current_user_from_cookie
 
 router = APIRouter()
 
@@ -18,8 +20,9 @@ router = APIRouter()
 async def create_chat(
     chat_create: ChatCreate,
     session: AsyncSession = Depends(db_helper.dependency_session_getter),
+    user: User = Depends(get_current_user_from_cookie),
 ):
-    data = await service.create_chat(session, chat_create)
+    data = await service.create_chat(session, chat_create, user.id)
     return data
 
 
@@ -31,8 +34,9 @@ async def create_chat(
 async def get_chat(
     chat_id: int,
     session: AsyncSession = Depends(db_helper.dependency_session_getter),
+    user: User = Depends(get_current_user_from_cookie),
 ):
-    data = await service.get_chat(session, chat_id)
+    data = await service.get_chat(session, chat_id, user.id)
     return data
 
 
@@ -45,8 +49,9 @@ async def update_chat(
     chat_id: int,
     chat_update: ChatUpdate,
     session: AsyncSession = Depends(db_helper.dependency_session_getter),
+    user: User = Depends(get_current_user_from_cookie),
 ):
-    data = await service.update_chat(session, chat_id, chat_update)
+    data = await service.update_chat(session, chat_id, chat_update, user.id)
     return data
 
 
@@ -57,5 +62,6 @@ async def update_chat(
 async def delete_chat(
     chat_id: int,
     session: AsyncSession = Depends(db_helper.dependency_session_getter),
+    user: User = Depends(get_current_user_from_cookie),
 ):
-    await service.delete_chat(session, chat_id)
+    await service.delete_chat(session, chat_id, user.id)

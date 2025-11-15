@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import features.messages.crud.message as crud
 import features.messages.mappers.message_builder as builder
+from features.chats.validators import check_chat_permission, get_chat_or_404
 from features.llm.client import LLMClient
 from features.llm.context_builder import build_dynamic_context
 from features.messages.schemas import MessageCreate, MessageRead
@@ -11,7 +12,11 @@ from shared.enums import SenderEnum
 async def send_message(
     session: AsyncSession,
     message_create: MessageCreate,
+    user_id: int,
 ) -> dict[str, MessageRead]:
+    chat = await get_chat_or_404(session, message_create.chat_id)
+    check_chat_permission(chat.user_id, user_id)
+
     user_message = await crud.create_message(session, message_create, SenderEnum.USER)
 
     all_messages = await crud.get_messages_for_window(session, message_create.chat_id)

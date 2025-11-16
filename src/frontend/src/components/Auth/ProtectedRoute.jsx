@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -8,10 +8,10 @@ const ProtectedRoute = ({ children }) => {
   // Если пользователь есть в localStorage, но нет в состоянии
   // (например, после обновления страницы)
   React.useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     if (savedUser && !user) {
       // Можно автоматически восстановить пользователя
-      console.log('User found in localStorage');
+      console.log("User found in localStorage");
     }
   }, [user]);
 

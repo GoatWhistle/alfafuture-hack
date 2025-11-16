@@ -1,28 +1,23 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useChat } from '../../contexts/ChatContext';
-import ChatSettingsModal from './ChatSettingsModal';
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useChat } from "../../contexts/ChatContext";
+import ChatSettingsModal from "./ChatSettingsModal";
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
-  const {
-    chats,
-    currentChat,
-    isLoading,
-    createNewChat,
-    selectChat
-  } = useChat();
+  const { chats, currentChat, isLoading, createNewChat, selectChat } =
+    useChat();
 
   const [settingsModal, setSettingsModal] = useState({
     isOpen: false,
-    chat: null
+    chat: null,
   });
 
   const handleNewChat = async () => {
     try {
       await createNewChat();
     } catch (error) {
-      console.error('Failed to create new chat:', error);
+      console.error("Failed to create new chat:", error);
     }
   };
 
@@ -34,14 +29,14 @@ const Sidebar = () => {
     e.stopPropagation(); // Предотвращаем выбор чата
     setSettingsModal({
       isOpen: true,
-      chat: chat
+      chat: chat,
     });
   };
 
   const closeSettingsModal = () => {
     setSettingsModal({
       isOpen: false,
-      chat: null
+      chat: null,
     });
   };
 
@@ -50,9 +45,9 @@ const Sidebar = () => {
   };
 
   const truncatePreview = (text, maxLength = 30) => {
-    if (!text) return 'Нет сообщений';
+    if (!text) return "Нет сообщений";
     if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength) + "...";
   };
 
   const getChatPreview = (chat) => {
@@ -63,7 +58,7 @@ const Sidebar = () => {
     if (chat.last_message) {
       return truncatePreview(chat.last_message);
     }
-    return 'Начните общение...';
+    return "Начните общение...";
   };
 
   return (
@@ -72,8 +67,8 @@ const Sidebar = () => {
         <div className="sidebar-header">
           <div className="user-info">
             <div className="user-info-main">
-              <h3>{user?.name || 'Пользователь'}</h3>
-              <p className="user-email">{user?.email || 'Email не указан'}</p>
+              <h3>{user?.name || "Пользователь"}</h3>
+              <p className="user-email">{user?.email || "Email не указан"}</p>
             </div>
           </div>
         </div>
@@ -84,7 +79,7 @@ const Sidebar = () => {
             onClick={handleNewChat}
             disabled={isLoading}
           >
-            {isLoading ? 'Создание...' : '+ Новый чат'}
+            {isLoading ? "Создание..." : "+ Новый чат"}
           </button>
 
           <div className="chat-history-section">
@@ -95,10 +90,10 @@ const Sidebar = () => {
 
             <div className="chat-history">
               {chats.length > 0 ? (
-                chats.map(chat => (
+                chats.map((chat) => (
                   <div
                     key={chat.id}
-                    className={`chat-item ${currentChat?.id === chat.id ? 'active' : ''}`}
+                    className={`chat-item ${currentChat?.id === chat.id ? "active" : ""}`}
                     onClick={() => handleChatSelect(chat)}
                   >
                     <div className="chat-icon">💬</div>
@@ -106,9 +101,7 @@ const Sidebar = () => {
                       <div className="chat-title">
                         {chat.title || `Чат ${chat.id}`}
                       </div>
-                      <div className="chat-preview">
-                        {getChatPreview(chat)}
-                      </div>
+                      <div className="chat-preview">{getChatPreview(chat)}</div>
                     </div>
 
                     {/* Кнопка настроек */}
@@ -117,8 +110,13 @@ const Sidebar = () => {
                       onClick={(e) => handleSettingsClick(chat, e)}
                       title="Настройки чата"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                       </svg>
                     </button>
 

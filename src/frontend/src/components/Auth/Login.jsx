@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -16,14 +16,14 @@ const Login = () => {
     e.preventDefault();
 
     if (!email || !password) {
-      return setError('Все поля обязательны для заполнения');
+      return setError("Все поля обязательны для заполнения");
     }
 
     try {
-      setError('');
+      setError("");
       setLoading(true);
       await login({ email, password });
-      navigate('/chat');
+      navigate("/chat");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -64,7 +64,7 @@ const Login = () => {
           className="btn btn-primary full-width"
           disabled={loading}
         >
-          {loading ? 'Вход...' : 'Войти'}
+          {loading ? "Вход..." : "Войти"}
         </button>
       </form>
     </div>

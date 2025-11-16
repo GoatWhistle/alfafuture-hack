@@ -1,12 +1,12 @@
-import React from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import Login from '../components/Auth/Login';
-import Signup from '../components/Auth/Signup';
+import React from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import Login from "../components/Auth/Login";
+import Signup from "../components/Auth/Signup";
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const currentTab = searchParams.get('tab') || 'login';
+  const currentTab = searchParams.get("tab") || "login";
 
   return (
     <div className="auth-page">
@@ -18,27 +18,27 @@ const AuthPage = () => {
 
         <div className="auth-tabs">
           <button
-            className={`auth-tab ${currentTab === 'login' ? 'active' : ''}`}
-            onClick={() => navigate('/auth?tab=login')}
+            className={`auth-tab ${currentTab === "login" ? "active" : ""}`}
+            onClick={() => navigate("/auth?tab=login")}
           >
             Вход
           </button>
           <button
-            className={`auth-tab ${currentTab === 'signup' ? 'active' : ''}`}
-            onClick={() => navigate('/auth?tab=signup')}
+            className={`auth-tab ${currentTab === "signup" ? "active" : ""}`}
+            onClick={() => navigate("/auth?tab=signup")}
           >
             Регистрация
           </button>
         </div>
 
         <div className="auth-content">
-          {currentTab === 'login' ? <Login /> : <Signup />}
+          {currentTab === "login" ? <Login /> : <Signup />}
         </div>
 
         <div className="auth-footer">
           <button
             className="btn btn-secondary full-width"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
           >
             Назад на главную
           </button>

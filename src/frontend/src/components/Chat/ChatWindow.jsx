@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useChat } from '../../contexts/ChatContext';
-import MarkdownRenderer from '../MarkdownRenderer';
+import React, { useState, useRef, useEffect } from "react";
+import { useChat } from "../../contexts/ChatContext";
+import MarkdownRenderer from "../MarkdownRenderer";
 
 const ChatWindow = () => {
   const { currentChat, messages, isSendingMessage, sendMessage } = useChat();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -23,32 +23,32 @@ const ChatWindow = () => {
     }
 
     await sendMessage(inputValue);
-    setInputValue('');
+    setInputValue("");
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
   };
 
   const formatTime = (createdAt) => {
-    if (!createdAt) return '';
+    if (!createdAt) return "";
 
     try {
       const date = new Date(createdAt);
 
       if (isNaN(date.getTime())) {
-        return '';
+        return "";
       }
 
-      return date.toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit'
+      return date.toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch (error) {
-      return '';
+      return "";
     }
   };
 
@@ -71,7 +71,8 @@ const ChatWindow = () => {
           <h2>{currentChat.title || `Чат ${currentChat.id}`}</h2>
           {currentChat.created_at && (
             <span className="chat-date">
-              Создан: {new Date(currentChat.created_at).toLocaleDateString('ru-RU')}
+              Создан:{" "}
+              {new Date(currentChat.created_at).toLocaleDateString("ru-RU")}
             </span>
           )}
         </div>
@@ -90,15 +91,18 @@ const ChatWindow = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`message ${message.sender} ${message.isError ? 'error' : ''}`}
+                className={`message ${message.sender} ${message.isError ? "error" : ""}`}
               >
                 <div className="message-avatar">
-                  {message.sender === 'user' ? '👤' :
-                   message.sender === 'ai' ? '🤖' : '⚡'}
+                  {message.sender === "user"
+                    ? "👤"
+                    : message.sender === "ai"
+                      ? "🤖"
+                      : "⚡"}
                 </div>
                 <div className="message-content">
                   <div className="message-text">
-                    {message.sender === 'ai' && !message.isTemp ? (
+                    {message.sender === "ai" && !message.isTemp ? (
                       <MarkdownRenderer content={message.content} />
                     ) : (
                       <>
@@ -147,8 +151,13 @@ const ChatWindow = () => {
               {isSendingMessage ? (
                 <div className="spinner"></div>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               )}
             </button>

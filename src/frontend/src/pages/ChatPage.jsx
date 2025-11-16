@@ -1,8 +1,8 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import ChatWindow from '../components/Chat/ChatWindow';
-import Sidebar from '../components/Chat/Sidebar';
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import ChatWindow from "../components/Chat/ChatWindow";
+import Sidebar from "../components/Chat/Sidebar";
 
 const ChatPage = () => {
   const { user, logout } = useAuth();
@@ -10,7 +10,7 @@ const ChatPage = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (

@@ -1,25 +1,25 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { chatService } from '../services/chatService';
-import { messageService } from '../services/messageService';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { chatService } from "../services/chatService";
+import { messageService } from "../services/messageService";
 
 const ChatContext = createContext();
 
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (!context) {
-    throw new Error('useChat must be used within a ChatProvider');
+    throw new Error("useChat must be used within a ChatProvider");
   }
   return context;
 };
 
 // Функция для нормализации сообщений при загрузке из localStorage
 const normalizeMessages = (chats) => {
-  return chats.map(chat => {
+  return chats.map((chat) => {
     if (chat.messages) {
-      chat.messages = chat.messages.map(message => ({
+      chat.messages = chat.messages.map((message) => ({
         ...message,
         // Убеждаемся, что created_at существует
-        created_at: message.created_at || new Date().toISOString()
+        created_at: message.created_at || new Date().toISOString(),
       }));
     }
     return chat;
@@ -28,13 +28,13 @@ const normalizeMessages = (chats) => {
 
 export const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState(() => {
-    const savedChats = localStorage.getItem('chats');
+    const savedChats = localStorage.getItem("chats");
     if (savedChats) {
       try {
         const parsedChats = JSON.parse(savedChats);
         return normalizeMessages(parsedChats);
       } catch (error) {
-        console.error('Error parsing chats from localStorage:', error);
+        console.error("Error parsing chats from localStorage:", error);
         return [];
       }
     }
@@ -49,7 +49,7 @@ export const ChatProvider = ({ children }) => {
 
   // Сохраняем чаты в localStorage при изменении
   useEffect(() => {
-    localStorage.setItem('chats', JSON.stringify(chats));
+    localStorage.setItem("chats", JSON.stringify(chats));
   }, [chats]);
 
   // Восстанавливаем текущий чат при загрузке
@@ -65,22 +65,22 @@ export const ChatProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const newChat = await chatService.createChat({
-        title: 'Новый чат',
-        ...chatData
+        title: "Новый чат",
+        ...chatData,
       });
 
-      console.log('✅ New chat created:', newChat);
+      console.log("✅ New chat created:", newChat);
 
       // Сразу устанавливаем новый чат как текущий
       setCurrentChat(newChat);
       setMessages(newChat.messages || []);
 
       // Добавляем в список чатов
-      setChats(prev => [newChat, ...prev]);
+      setChats((prev) => [newChat, ...prev]);
 
       return newChat;
     } catch (error) {
-      console.error('❌ Failed to create chat:', error);
+      console.error("❌ Failed to create chat:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -90,27 +90,29 @@ export const ChatProvider = ({ children }) => {
   const loadChatById = async (chatId) => {
     try {
       setIsLoadingChat(true);
-      console.log('🔄 Loading chat:', chatId);
+      console.log("🔄 Loading chat:", chatId);
 
       const chatData = await chatService.getChatById(chatId);
 
       // Убедимся, что у всех сообщений есть created_at
       if (chatData.messages) {
-        chatData.messages = chatData.messages.map(message => ({
+        chatData.messages = chatData.messages.map((message) => ({
           ...message,
-          created_at: message.created_at || new Date().toISOString()
+          created_at: message.created_at || new Date().toISOString(),
         }));
       }
 
-      console.log('✅ Chat data loaded:', chatData);
+      console.log("✅ Chat data loaded:", chatData);
 
       setCurrentChat(chatData);
       setMessages(chatData.messages || []);
 
       // Обновляем чат в списке
-      setChats(prev => prev.map(chat =>
-        chat.id === chatId ? { ...chat, ...chatData } : chat
-      ));
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId ? { ...chat, ...chatData } : chat,
+        ),
+      );
 
       return chatData;
     } catch (error) {
@@ -123,22 +125,26 @@ export const ChatProvider = ({ children }) => {
 
   const selectChat = async (chat) => {
     try {
-      console.log('🖱️ Selecting chat:', chat.id, 'Current chat:', currentChat?.id);
+      console.log(
+        "🖱️ Selecting chat:",
+        chat.id,
+        "Current chat:",
+        currentChat?.id,
+      );
 
       if (currentChat?.id === chat.id) {
-        console.log('⚡ Same chat, skipping');
+        console.log("⚡ Same chat, skipping");
         return;
       }
 
       await loadChatById(chat.id);
-      console.log('✅ Chat selected successfully');
-
+      console.log("✅ Chat selected successfully");
     } catch (error) {
-      console.error('❌ Failed to select chat:', error);
+      console.error("❌ Failed to select chat:", error);
       // При ошибке все равно переключаемся на базовые данные
       setCurrentChat(chat);
       setMessages([]);
-      console.log('🔄 Fallback: using basic chat data');
+      console.log("🔄 Fallback: using basic chat data");
     }
   };
 
@@ -154,70 +160,71 @@ export const ChatProvider = ({ children }) => {
       const tempUserMessage = {
         id: `temp-${Date.now()}`,
         content: content.trim(),
-        sender: 'user',
+        sender: "user",
         created_at: new Date().toISOString(),
-        isTemp: true
+        isTemp: true,
       };
 
-      setMessages(prev => [...prev, tempUserMessage]);
+      setMessages((prev) => [...prev, tempUserMessage]);
 
       // Отправляем сообщение на бэкенд
       const response = await messageService.sendMessage({
         chat_id: currentChat.id,
-        content: content.trim()
+        content: content.trim(),
       });
 
-      console.log('✅ Message sent successfully:', response);
+      console.log("✅ Message sent successfully:", response);
 
       // Удаляем временное сообщение и добавляем настоящие
-      setMessages(prev => {
-        const filtered = prev.filter(msg => !msg.isTemp);
+      setMessages((prev) => {
+        const filtered = prev.filter((msg) => !msg.isTemp);
         return [
           ...filtered,
           {
             id: response.user_message.id || `user-${Date.now()}`,
             content: response.user_message.content,
-            sender: 'user',
+            sender: "user",
             created_at: response.user_message.created_at,
-            ...response.user_message
+            ...response.user_message,
           },
           {
             id: response.llm_message.id || `ai-${Date.now()}`,
             content: response.llm_message.content,
-            sender: 'ai',
+            sender: "ai",
             created_at: response.llm_message.created_at,
-            ...response.llm_message
-          }
+            ...response.llm_message,
+          },
         ];
       });
 
       // Обновляем последнее сообщение в чате
-      setChats(prev => prev.map(chat =>
-        chat.id === currentChat.id
-          ? {
-              ...chat,
-              last_message: content.trim(),
-              updated_at: new Date().toISOString()
-            }
-          : chat
-      ));
-
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === currentChat.id
+            ? {
+                ...chat,
+                last_message: content.trim(),
+                updated_at: new Date().toISOString(),
+              }
+            : chat,
+        ),
+      );
     } catch (error) {
-      console.error('❌ Failed to send message:', error);
+      console.error("❌ Failed to send message:", error);
 
       // Удаляем временное сообщение при ошибке
-      setMessages(prev => prev.filter(msg => !msg.isTemp));
+      setMessages((prev) => prev.filter((msg) => !msg.isTemp));
 
       // Показываем сообщение об ошибке
       const errorMessage = {
         id: `error-${Date.now()}`,
-        content: 'Ошибка при отправке сообщения. Попробуйте еще раз.',
-        sender: 'system',
+        content: "Ошибка при отправке сообщения. Попробуйте еще раз.",
+        sender: "system",
         created_at: new Date().toISOString(),
-        isError: true
+        isError: true,
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsSendingMessage(false);
     }
@@ -225,36 +232,38 @@ export const ChatProvider = ({ children }) => {
 
   const updateChat = async (chatId, chatData) => {
     try {
-      console.log('🔄 Updating chat:', chatId, chatData);
+      console.log("🔄 Updating chat:", chatId, chatData);
 
       const updatedChat = await chatService.updateChat(chatId, chatData);
 
       // Обновляем чат в списке
-      setChats(prev => prev.map(chat =>
-        chat.id === chatId ? { ...chat, ...updatedChat } : chat
-      ));
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId ? { ...chat, ...updatedChat } : chat,
+        ),
+      );
 
       // Если это текущий чат, обновляем его тоже
       if (currentChat?.id === chatId) {
-        setCurrentChat(prev => ({ ...prev, ...updatedChat }));
+        setCurrentChat((prev) => ({ ...prev, ...updatedChat }));
       }
 
-      console.log('✅ Chat updated successfully');
+      console.log("✅ Chat updated successfully");
       return updatedChat;
     } catch (error) {
-      console.error('❌ Failed to update chat:', error);
+      console.error("❌ Failed to update chat:", error);
       throw error;
     }
   };
 
   const deleteChat = async (chatId) => {
     try {
-      console.log('🗑️ Deleting chat:', chatId);
+      console.log("🗑️ Deleting chat:", chatId);
 
       await chatService.deleteChat(chatId);
 
       // Удаляем чат из списка
-      setChats(prev => prev.filter(chat => chat.id !== chatId));
+      setChats((prev) => prev.filter((chat) => chat.id !== chatId));
 
       // Если удаляем текущий чат, очищаем текущий чат
       if (currentChat?.id === chatId) {
@@ -262,32 +271,33 @@ export const ChatProvider = ({ children }) => {
         setMessages([]);
       }
 
-      console.log('✅ Chat deleted successfully');
-
+      console.log("✅ Chat deleted successfully");
     } catch (error) {
-      console.error('❌ Failed to delete chat:', error);
+      console.error("❌ Failed to delete chat:", error);
       throw error;
     }
   };
 
   const addMessage = (message) => {
-    setMessages(prev => [...prev, message]);
+    setMessages((prev) => [...prev, message]);
 
     if (currentChat) {
-      setChats(prev => prev.map(chat =>
-        chat.id === currentChat.id
-          ? {
-              ...chat,
-              last_message: message.content,
-              messages: [...(chat.messages || []), message]
-            }
-          : chat
-      ));
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === currentChat.id
+            ? {
+                ...chat,
+                last_message: message.content,
+                messages: [...(chat.messages || []), message],
+              }
+            : chat,
+        ),
+      );
     }
   };
 
   const refreshChats = async () => {
-    console.log('🔄 Refresh chats - not implemented');
+    console.log("🔄 Refresh chats - not implemented");
     // Здесь можно добавить логику для загрузки всех чатов с сервера,
     // когда появится соответствующий endpoint
   };
@@ -317,12 +327,8 @@ export const ChatProvider = ({ children }) => {
 
     // Message actions
     sendMessage,
-    addMessage
+    addMessage,
   };
 
-  return (
-    <ChatContext.Provider value={value}>
-      {children}
-    </ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };

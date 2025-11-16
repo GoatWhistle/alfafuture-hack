@@ -1,13 +1,18 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { ChatProvider } from './contexts/ChatContext';
-import MainPage from './pages/MainPage';
-import AuthPage from './pages/AuthPage';
-import ChatPage from './pages/ChatPage';
-import ProtectedRoute from './components/Auth/ProtectedRoute';
-import './styles/main.css';
-import './styles/components.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ChatProvider } from "./contexts/ChatContext";
+import MainPage from "./pages/MainPage";
+import AuthPage from "./pages/AuthPage";
+import ChatPage from "./pages/ChatPage";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import "./styles/main.css";
+import "./styles/components.css";
 
 function App() {
   return (

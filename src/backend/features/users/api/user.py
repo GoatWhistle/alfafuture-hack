@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/register",
+    "/signup",
     response_model=UserResponseSchema,
     status_code=status.HTTP_201_CREATED,
 )

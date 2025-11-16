@@ -1,28 +1,30 @@
-import React from 'react';
+import React from "react";
 
 const Button = ({
   children,
-  variant = 'primary',
+  variant = "primary",
   disabled = false,
   loading = false,
   fullWidth = false,
   onClick,
-  type = 'button',
-  className = '',
+  type = "button",
+  className = "",
   ...props
 }) => {
-  const baseClasses = 'btn';
+  const baseClasses = "btn";
   const variantClasses = {
-    primary: 'btn-primary',
-    secondary: 'btn-secondary'
+    primary: "btn-primary",
+    secondary: "btn-secondary",
   };
 
   const classes = [
     baseClasses,
     variantClasses[variant],
-    fullWidth && 'btn-full-width',
-    className
-  ].filter(Boolean).join(' ');
+    fullWidth && "btn-full-width",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <button
@@ -32,7 +34,7 @@ const Button = ({
       onClick={onClick}
       {...props}
     >
-      {loading ? 'Загрузка...' : children}
+      {loading ? "Загрузка..." : children}
     </button>
   );
 };

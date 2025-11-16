@@ -1,12 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  actions
-}) => {
+const Modal = ({ isOpen, onClose, title, children, actions }) => {
   if (!isOpen) return null;
 
   return (
@@ -19,15 +13,9 @@ const Modal = ({
           </button>
         </div>
 
-        <div className="modal-content">
-          {children}
-        </div>
+        <div className="modal-content">{children}</div>
 
-        {actions && (
-          <div className="modal-actions">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="modal-actions">{actions}</div>}
       </div>
     </div>
   );

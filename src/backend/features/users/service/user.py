@@ -101,7 +101,6 @@ async def get_current_user_from_cookie(
 ) -> User:
     if access_token is None:
         raise CREDENTIALS_EXCEPTION
-
     try:
         payload = decode_jwt(token=access_token)
         user_id: str = payload.get("sub")

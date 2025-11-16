@@ -1,6 +1,6 @@
-import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const { user } = useAuth();
@@ -8,7 +8,7 @@ const MainPage = () => {
 
   React.useEffect(() => {
     if (user) {
-      navigate('/chat');
+      navigate("/chat");
     }
   }, [user, navigate]);
 
@@ -16,22 +16,20 @@ const MainPage = () => {
     <div className="main-page">
       <div className="hero-section">
         <div className="container">
-          <h1 className="hero-title">
-            Ваш AI Помощник
-          </h1>
+          <h1 className="hero-title">Ваш AI Помощник</h1>
           <p className="hero-subtitle">
             Современный искусственный интеллект для решения ваших задач
           </p>
           <div className="hero-buttons">
             <button
               className="btn btn-primary"
-              onClick={() => navigate('/auth?tab=login')}
+              onClick={() => navigate("/auth?tab=login")}
             >
               Войти
             </button>
             <button
               className="btn btn-secondary"
-              onClick={() => navigate('/auth?tab=signup')}
+              onClick={() => navigate("/auth?tab=signup")}
             >
               Зарегистрироваться
             </button>

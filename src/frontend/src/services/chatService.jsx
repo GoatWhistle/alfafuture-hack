@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = "http://localhost:8000/api/v1";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -9,7 +9,7 @@ const api = axios.create({
 
 export const chatService = {
   async createChat(chatData) {
-    const response = await api.post('/chats/', chatData);
+    const response = await api.post("/chats/", chatData);
     return response.data;
   },
 
@@ -25,5 +25,5 @@ export const chatService = {
 
   async deleteChat(chatId) {
     await api.delete(`/chats/${chatId}/`);
-  }
+  },
 };

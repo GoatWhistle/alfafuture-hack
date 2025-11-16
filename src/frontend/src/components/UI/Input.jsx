@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
 const Input = ({
   label,
   error,
   fullWidth = false,
-  className = '',
+  className = "",
   ...props
 }) => {
   return (
-    <div className={`form-group ${fullWidth ? 'full-width' : ''}`}>
+    <div className={`form-group ${fullWidth ? "full-width" : ""}`}>
       {label && (
         <label htmlFor={props.id} className="input-label">
           {label}
@@ -16,13 +16,11 @@ const Input = ({
       )}
 
       <input
-        className={`input ${error ? 'input-error' : ''} ${className}`}
+        className={`input ${error ? "input-error" : ""} ${className}`}
         {...props}
       />
 
-      {error && (
-        <span className="error-text">{error}</span>
-      )}
+      {error && <span className="error-text">{error}</span>}
     </div>
   );
 };

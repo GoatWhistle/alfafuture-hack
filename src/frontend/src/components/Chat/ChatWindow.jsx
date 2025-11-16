@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '../../contexts/ChatContext';
+import MarkdownRenderer from '../MarkdownRenderer';
 
 const ChatWindow = () => {
   const { currentChat, messages, isSendingMessage, sendMessage } = useChat();
@@ -32,11 +33,23 @@ const ChatWindow = () => {
     }
   };
 
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const formatTime = (createdAt) => {
+    if (!createdAt) return '';
+
+    try {
+      const date = new Date(createdAt);
+
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+
+      return date.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return '';
+    }
   };
 
   if (!currentChat) {
@@ -85,18 +98,26 @@ const ChatWindow = () => {
                 </div>
                 <div className="message-content">
                   <div className="message-text">
-                    {message.content}
-                    {message.isTemp && (
-                      <span className="typing-indicator">
-                        <span>.</span>
-                        <span>.</span>
-                        <span>.</span>
-                      </span>
+                    {message.sender === 'ai' && !message.isTemp ? (
+                      <MarkdownRenderer content={message.content} />
+                    ) : (
+                      <>
+                        {message.content}
+                        {message.isTemp && (
+                          <span className="typing-indicator">
+                            <span>.</span>
+                            <span>.</span>
+                            <span>.</span>
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
-                  <div className="message-time">
-                    {formatTime(message.timestamp)}
-                  </div>
+                  {message.created_at && (
+                    <div className="message-time">
+                      {formatTime(message.created_at)}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

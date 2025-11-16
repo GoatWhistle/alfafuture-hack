@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
+    surname: '',
+    patronymic: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -14,37 +16,49 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    if (errors[e.target.name]) {
-      setErrors({
-        ...errors,
-        [e.target.name]: ''
-      });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Очищаем ошибку для поля при изменении
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
+    // Валидация имени
     if (!formData.name.trim()) {
       newErrors.name = 'Имя обязательно';
     }
 
-    if (!formData.email) {
-      newErrors.email = 'Email обязателен';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Некорректный email';
+    // Валидация фамилии
+    if (!formData.surname.trim()) {
+      newErrors.surname = 'Фамилия обязательна';
     }
 
+    // Валидация email
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email обязателен';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Некорректный формат email';
+    }
+
+    // Валидация пароля
     if (!formData.password) {
       newErrors.password = 'Пароль обязателен';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Пароль должен быть не менее 6 символов';
     }
 
+    // Подтверждение пароля
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Пароли не совпадают';
     }
@@ -59,17 +73,25 @@ const Signup = () => {
     if (!validateForm()) return;
 
     try {
-      await signup(formData);
+      // Подготавливаем данные для отправки (убираем confirmPassword)
+      const { confirmPassword, ...userData } = formData;
+
+      await signup(userData);
       navigate('/chat');
     } catch (error) {
-      setErrors({ submit: 'Ошибка регистрации. Попробуйте снова.' });
+      if (error.response?.status === 409) {
+        setErrors({ submit: 'Пользователь с таким email уже существует' });
+      } else {
+        setErrors({ submit: 'Ошибка регистрации. Попробуйте снова.' });
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="auth-form">
+      {/* Поле имени */}
       <div className="form-group">
-        <label htmlFor="name">Имя</label>
+        <label htmlFor="name">Имя *</label>
         <input
           type="text"
           id="name"
@@ -77,13 +99,44 @@ const Signup = () => {
           value={formData.name}
           onChange={handleChange}
           className={errors.name ? 'error' : ''}
-          placeholder="Ваше имя"
+          placeholder="Введите ваше имя"
         />
         {errors.name && <span className="error-text">{errors.name}</span>}
       </div>
 
+      {/* Поле фамилии */}
       <div className="form-group">
-        <label htmlFor="email">Email</label>
+        <label htmlFor="surname">Фамилия *</label>
+        <input
+          type="text"
+          id="surname"
+          name="surname"
+          value={formData.surname}
+          onChange={handleChange}
+          className={errors.surname ? 'error' : ''}
+          placeholder="Введите вашу фамилию"
+        />
+        {errors.surname && <span className="error-text">{errors.surname}</span>}
+      </div>
+
+      {/* Поле отчества (необязательное) */}
+      <div className="form-group">
+        <label htmlFor="patronymic">Отчество</label>
+        <input
+          type="text"
+          id="patronymic"
+          name="patronymic"
+          value={formData.patronymic}
+          onChange={handleChange}
+          className={errors.patronymic ? 'error' : ''}
+          placeholder="Введите ваше отчество (если есть)"
+        />
+        {errors.patronymic && <span className="error-text">{errors.patronymic}</span>}
+      </div>
+
+      {/* Поле email */}
+      <div className="form-group">
+        <label htmlFor="email">Email *</label>
         <input
           type="email"
           id="email"
@@ -96,8 +149,9 @@ const Signup = () => {
         {errors.email && <span className="error-text">{errors.email}</span>}
       </div>
 
+      {/* Поле пароля */}
       <div className="form-group">
-        <label htmlFor="password">Пароль</label>
+        <label htmlFor="password">Пароль *</label>
         <input
           type="password"
           id="password"
@@ -110,8 +164,9 @@ const Signup = () => {
         {errors.password && <span className="error-text">{errors.password}</span>}
       </div>
 
+      {/* Подтверждение пароля */}
       <div className="form-group">
-        <label htmlFor="confirmPassword">Подтвердите пароль</label>
+        <label htmlFor="confirmPassword">Подтвердите пароль *</label>
         <input
           type="password"
           id="confirmPassword"
@@ -126,10 +181,12 @@ const Signup = () => {
         )}
       </div>
 
+      {/* Общая ошибка */}
       {errors.submit && (
         <div className="error-message">{errors.submit}</div>
       )}
 
+      {/* Кнопка отправки */}
       <button
         type="submit"
         className="btn btn-primary full-width"

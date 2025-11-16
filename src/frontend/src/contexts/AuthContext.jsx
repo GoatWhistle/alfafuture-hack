@@ -1,11 +1,12 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
+import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
@@ -13,62 +14,38 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  // Проверяем сохраненные данные при загрузке
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+  const [error, setError] = useState(null);
 
   const login = async (credentials) => {
-    setIsLoading(true);
     try {
-      // TODO: Заменить на реальный вызов API
-      console.log('Login attempt:', credentials);
+      setIsLoading(true);
+      setError(null);
 
-      // Имитация API запроса
-      const userData = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            id: 1,
-            name: 'User',
-            email: credentials.email
-          });
-        }, 1000);
-      });
-
+      const userData = await authService.login(credentials);
       setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
 
+      return userData;
     } catch (error) {
+      const message = error.response?.data?.detail || 'Ошибка входа';
+      setError(message);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signup = async (userData) => {
-    setIsLoading(true);
+  const register = async (userData) => {
     try {
-      // TODO: Заменить на реальный вызов API
-      console.log('Signup attempt:', userData);
+      setIsLoading(true);
+      setError(null);
 
-      const newUser = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            id: Date.now(),
-            name: userData.name,
-            email: userData.email
-          });
-        }, 1000);
-      });
-
+      const newUser = await authService.register(userData);
       setUser(newUser);
-      localStorage.setItem('user', JSON.stringify(newUser));
 
+      return newUser;
     } catch (error) {
+      const message = error.response?.data?.detail || 'Ошибка регистрации';
+      setError(message);
       throw error;
     } finally {
       setIsLoading(false);
@@ -76,16 +53,27 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Просто очищаем состояние
     setUser(null);
-    localStorage.removeItem('user');
+    setError(null);
+    localStorage.removeItem('token');
+
+    // Перенаправляем на страницу логина
+    window.location.href = '/login';
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   const value = {
     user,
+    isLoading,
+    error,
     login,
-    signup,
+    register,
     logout,
-    isLoading
+    clearError
   };
 
   return (

@@ -1,101 +1,73 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [errors, setErrors] = useState({});
-  const { login, isLoading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    if (errors[e.target.name]) {
-      setErrors({
-        ...errors,
-        [e.target.name]: ''
-      });
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email) {
-      newErrors.email = 'Email обязателен';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Некорректный email';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Пароль обязателен';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!email || !password) {
+      return setError('Все поля обязательны для заполнения');
+    }
 
     try {
-      await login(formData);
+      setError('');
+      setLoading(true);
+      await login({ email, password });
       navigate('/chat');
-    } catch (error) {
-      setErrors({ submit: 'Ошибка входа. Проверьте данные.' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form">
-      <div className="form-group">
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className={errors.email ? 'error' : ''}
-          placeholder="your@email.com"
-        />
-        {errors.email && <span className="error-text">{errors.email}</span>}
-      </div>
+    <div className="auth-form">
+      <h2>Вход в систему</h2>
+      {error && <div className="error-message">{error}</div>}
 
-      <div className="form-group">
-        <label htmlFor="password">Пароль</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className={errors.password ? 'error' : ''}
-          placeholder="Ваш пароль"
-        />
-        {errors.password && <span className="error-text">{errors.password}</span>}
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            required
+          />
+        </div>
 
-      {errors.submit && (
-        <div className="error-message">{errors.submit}</div>
-      )}
+        <div className="form-group">
+          <label>Пароль</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Ваш пароль"
+            required
+          />
+        </div>
 
-      <button
-        type="submit"
-        className="btn btn-primary full-width"
-        disabled={isLoading}
-      >
-        {isLoading ? 'Вход...' : 'Войти'}
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="btn btn-primary full-width"
+          disabled={loading}
+        >
+          {loading ? 'Вход...' : 'Войти'}
+        </button>
+      </form>
+    </div>
   );
 };
 

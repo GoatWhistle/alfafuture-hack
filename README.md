@@ -78,10 +78,10 @@ docker compose --env-file .env up -d --build
 Our team consists of specialists combining development, design, and business analysis skills to create a small business
 assistant application:
 
-- **Mikhail Khorokhorin** — Backend development, LLM integration, database management;
-- **Artem Saveliev** — Backend development, registration and authorization;
-- **Robert Savitskas** — Frontend development, UI/UX;
-- **Timofey Pupykin** — Testing, Docker/CI/CD, ensuring stability and deployment.
+- **Mikhail Khorokhorin** — Backend development, LLM integration, database management
+- **Artem Saveliev** — Backend development, registration and authorization
+- **Robert Savitskas** — Frontend development, UI/UX
+- **Timofey Pupykin** — Testing, Docker/CI/CD, ensuring stability and deployment
 
 Together, we designed the application architecture, implemented the LLM assistant functionality, and provided a
 user-friendly interface.

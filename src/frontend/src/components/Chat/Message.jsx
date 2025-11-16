@@ -16,7 +16,7 @@ const Message = ({ message, isUser }) => {
       <div className="message-content">
         <div className="message-text">{message.content}</div>
         <div className="message-time">
-          {formatTime(message.timestamp)}
+          {formatTime(message.created_at)}
         </div>
       </div>
     </div>

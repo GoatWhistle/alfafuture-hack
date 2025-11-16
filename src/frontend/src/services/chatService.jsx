@@ -16,7 +16,14 @@ export const chatService = {
   async getChatById(chatId) {
     const response = await api.get(`/chats/${chatId}/`);
     return response.data;
-  }
+  },
 
-  // Убираем getUserChats и getChatMessages, так как их нет
+  async updateChat(chatId, chatData) {
+    const response = await api.patch(`/chats/${chatId}/`, chatData);
+    return response.data;
+  },
+
+  async deleteChat(chatId) {
+    await api.delete(`/chats/${chatId}/`);
+  }
 };

@@ -47,21 +47,6 @@ services:
     networks:
       - app-net
 
-#  migrations:
-#    build:
-#      context: ./
-#      dockerfile: docker_build/migrations/Dockerfile
-#    depends_on:
-#      pg:
-#        condition: service_healthy
-#    restart: "no"
-#    env_file:
-#      - src/backend/.env
-#    networks:
-#      - app-net
-#    volumes:
-#      - ./src/backend:/backend
-
 volumes:
   pgdata:
 

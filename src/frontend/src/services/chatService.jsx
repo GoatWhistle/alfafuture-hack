@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -13,13 +13,10 @@ export const chatService = {
     return response.data;
   },
 
-  async getChat(chatId) {
-    const response = await api.get(`/chats/${chatId}`);
-    return response.data;
-  },
-
-  async deleteChat(chatId) {
-    const response = await api.delete(`/chats/${chatId}`);
+  async getChatById(chatId) {
+    const response = await api.get(`/chats/${chatId}/`);
     return response.data;
   }
+
+  // Убираем getUserChats и getChatMessages, так как их нет
 };

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authService } from '../services/authService';
 
 const AuthContext = createContext();
@@ -12,9 +12,23 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // Загружаем пользователя из localStorage при инициализации
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Сохраняем пользователя в localStorage при изменении
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   const login = async (credentials) => {
     try {
@@ -53,12 +67,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Просто очищаем состояние
     setUser(null);
     setError(null);
-    localStorage.removeItem('token');
-
-    // Перенаправляем на страницу логина
+    localStorage.removeItem('user');
+    localStorage.removeItem('chats');
     window.location.href = '/login';
   };
 

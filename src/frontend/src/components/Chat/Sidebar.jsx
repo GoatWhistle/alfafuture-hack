@@ -4,7 +4,14 @@ import { useChat } from '../../contexts/ChatContext';
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
-  const { chats, currentChat, isLoading, createNewChat, selectChat } = useChat();
+  const {
+    chats,
+    currentChat,
+    isLoading,
+    isLoadingChat,
+    createNewChat,
+    selectChat
+  } = useChat();
 
   const handleNewChat = async () => {
     try {
@@ -16,8 +23,8 @@ const Sidebar = () => {
     }
   };
 
-  const handleChatSelect = (chat) => {
-    selectChat(chat);
+  const handleChatSelect = async (chat) => {
+    await selectChat(chat);
   };
 
   const handleLogout = () => {
@@ -29,6 +36,18 @@ const Sidebar = () => {
     if (!text) return 'Нет сообщений';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
+  };
+
+  // Получаем превью для чата
+  const getChatPreview = (chat) => {
+    // Если это текущий чат и у него есть сообщения, показываем последнее
+    if (currentChat?.id === chat.id && chat.messages?.length > 0) {
+      const lastMessage = chat.messages[chat.messages.length - 1];
+      return truncatePreview(lastMessage.content);
+    }
+
+    // Иначе используем дефолтное сообщение
+    return 'Начните общение...';
   };
 
   return (
@@ -74,7 +93,7 @@ const Sidebar = () => {
         {/* Список чатов */}
         <div className="chat-history-section">
           <div className="section-header">
-            <h4>История чатов</h4>
+            <h4>Мои чаты</h4>
             <span className="chats-count">({chats.length})</span>
           </div>
 
@@ -83,7 +102,7 @@ const Sidebar = () => {
               chats.map(chat => (
                 <div
                   key={chat.id}
-                  className={`chat-item ${currentChat?.id === chat.id ? 'active' : ''}`}
+                  className={`chat-item ${currentChat?.id === chat.id ? 'active' : ''} ${isLoadingChat ? 'loading' : ''}`}
                   onClick={() => handleChatSelect(chat)}
                 >
                   <div className="chat-icon">
@@ -92,9 +111,12 @@ const Sidebar = () => {
                   <div className="chat-content">
                     <div className="chat-title">
                       {chat.title || `Чат ${chat.id}`}
+                      {isLoadingChat && currentChat?.id === chat.id && (
+                        <span className="loading-dots">...</span>
+                      )}
                     </div>
                     <div className="chat-preview">
-                      {truncatePreview(chat.last_message || 'Начните общение...')}
+                      {getChatPreview(chat)}
                     </div>
                   </div>
                   {currentChat?.id === chat.id && (
@@ -127,7 +149,7 @@ const Sidebar = () => {
         {user && (
           <div className="user-stats">
             <div className="stat-item">
-              <span>Активных чатов:</span>
+              <span>Создано чатов:</span>
               <strong>{chats.length}</strong>
             </div>
           </div>

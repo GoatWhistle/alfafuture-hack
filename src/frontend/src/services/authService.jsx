@@ -32,6 +32,4 @@ export const authService = {
 
     return response.data;
   },
-
-  // Убираем getCurrentUser
 };

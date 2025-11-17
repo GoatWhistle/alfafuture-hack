@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { authService } from "../services/authService";
 import axios from "axios";
 
+axios.defaults.withCredentials = true;
+
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -13,27 +15,25 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Загружаем пользователя и токен из localStorage
+  // Загружаем сохраненные данные пользователя (имя, email) для отображения в UI
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Сохраняем пользователя и токен в localStorage
+  // Эффект только для сохранения данных ЮЗЕРА в localStorage (чтобы не слетало имя при F5)
+  // Токен мы здесь больше не трогаем — он живет в защищенной куке
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
-      // Подставляем токен для всех будущих запросов axios
-      if (user.access_token) {
-        axios.defaults.headers.common["Authorization"] =
-          `Bearer ${user.access_token}`;
-      }
     } else {
       localStorage.removeItem("user");
-      delete axios.defaults.headers.common["Authorization"];
     }
+    // Мы убрали отсюда axios.defaults.headers...
+    // так как браузер теперь сам прикрепляет куку
   }, [user]);
 
   const login = async (credentials) => {
@@ -42,12 +42,18 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       console.log("[AuthProvider] Logging in with credentials:", credentials);
 
-      const { user: loggedUser, access_token } =
-        await authService.login(credentials);
-      console.log("[AuthProvider] Login response:", loggedUser, access_token);
+      // authService делает запрос, и браузер автоматически сохраняет полученную куку
+      const response = await authService.login(credentials);
 
-      setUser({ ...loggedUser, access_token });
-      console.log("[AuthProvider] User state after login:", user);
+      // Так как бекенд возвращает UserResponseSchema, скорее всего данные пользователя
+      // лежат либо в корне ответа, либо в поле user.
+      // Проверяем оба варианта для надежности:
+      const loggedUser = response.user || response;
+
+      console.log("[AuthProvider] Login success, user:", loggedUser);
+
+      // Сохраняем только данные пользователя, токен нам в стейте не нужен
+      setUser(loggedUser);
       return loggedUser;
     } catch (err) {
       console.error(
@@ -67,12 +73,12 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       console.log("[AuthProvider] Signing up with userData:", userData);
 
-      const { user: newUser, access_token } =
-        await authService.signup(userData);
-      console.log("[AuthProvider] Signup response:", newUser, access_token);
+      const response = await authService.signup(userData);
 
-      setUser({ ...newUser, access_token });
-      console.log("[AuthProvider] User state after signup:", user);
+      const newUser = response.user || response;
+      console.log("[AuthProvider] Signup success, user:", newUser);
+
+      setUser(newUser);
       return newUser;
     } catch (err) {
       console.error(
@@ -86,7 +92,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Желательно сделать запрос на бекенд, чтобы он очистил куку (set-cookie max-age=0)
+      // Если у тебя есть такой эндпоинт, раскомментируй строку ниже:
+      // await axios.post("http://localhost:8000/auth/logout");
+    } catch (e) {
+      console.error("Logout warning:", e);
+    }
+
+    // Очищаем локальное состояние
     setUser(null);
     setError(null);
     localStorage.removeItem("user");

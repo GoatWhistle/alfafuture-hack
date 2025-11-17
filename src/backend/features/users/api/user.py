@@ -44,8 +44,8 @@ async def login_for_access_token(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="strict",
-        secure=True,
+        samesite="lax",
+        secure=False,
         max_age=settings.jwt.access_token_lifetime_seconds,
     )
     return user_schema

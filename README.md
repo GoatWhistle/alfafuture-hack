@@ -68,8 +68,8 @@ docker compose --env-file .env up -d --build
 
 ### 5. Check the services
 
-- **Backend**: open http://127.0.0.1:8000/docs
-- **Frontend**: open http://127.0.0.1:80
+- **Backend**: open http://localhost:8000/docs
+- **Frontend**: open http://localhost:80
 
 ---
 
